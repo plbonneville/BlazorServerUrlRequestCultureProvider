@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30413.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorServerUrlRequestCultureProvider", "src\BlazorServerUrlRequestCultureProvider\BlazorServerUrlRequestCultureProvider.csproj", "{F66648F1-B995-4034-BD52-84CBE408A842}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorServerUrlRequestCultureProvider.Example", "tests\BlazorServerUrlRequestCultureProvider.Example\BlazorServerUrlRequestCultureProvider.Example.csproj", "{D26B92F4-2ACC-4B3E-9068-D0921DBD10B7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A0ACA566-7462-4481-A834-72759DC71268}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorServerUrlRequestCultureProvider.UnitTests", "tests\BlazorServerUrlRequestCultureProvider.UnitTests\BlazorServerUrlRequestCultureProvider.UnitTests.csproj", "{47B13B89-886D-4736-9A84-CD814506B42D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F66648F1-B995-4034-BD52-84CBE408A842}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F66648F1-B995-4034-BD52-84CBE408A842}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F66648F1-B995-4034-BD52-84CBE408A842}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F66648F1-B995-4034-BD52-84CBE408A842}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D26B92F4-2ACC-4B3E-9068-D0921DBD10B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D26B92F4-2ACC-4B3E-9068-D0921DBD10B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D26B92F4-2ACC-4B3E-9068-D0921DBD10B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D26B92F4-2ACC-4B3E-9068-D0921DBD10B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47B13B89-886D-4736-9A84-CD814506B42D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47B13B89-886D-4736-9A84-CD814506B42D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47B13B89-886D-4736-9A84-CD814506B42D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47B13B89-886D-4736-9A84-CD814506B42D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A790B9AC-BB6F-4D4E-A1AE-B2E00A840744}
+	EndGlobalSection
+EndGlobal

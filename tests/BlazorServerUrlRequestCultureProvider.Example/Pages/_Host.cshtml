@@ -1,0 +1,45 @@
+﻿@page "/"
+@namespace BlazorServerUrlRequestCultureProvider.Example.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>url-based-localization-scheme-for-blazor-server</title>
+    <base href="~/" />    
+    <link href="~/lib/twitter-bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/site.css" rel="stylesheet" />
+</head>
+<body>
+    <app>
+        <component type="typeof(App)" render-mode="ServerPrerendered" />
+    </app>
+
+    <div id="blazor-error-ui">
+        <environment include="Staging,Production">
+            Une erreur non gérée s'est produite. Cette application peut ne plus répondre tant qu'elle n'est pas rechargée.
+            <br />
+            An error has occurred. This application may no longer respond until reloaded.
+        </environment>
+        <environment include="Development">
+            An unhandled exception has occurred. See browser dev tools for details.
+        </environment>
+        <a href="" class="reload">Recharger<br />Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+
+    <script autostart="false" src="_framework/blazor.server.js"></script>
+    <script>
+        Blazor.start({
+            configureSignalR: function (builder) {
+                builder.configureLogging("information");
+            }
+        });
+    </script>
+</body>
+</html>

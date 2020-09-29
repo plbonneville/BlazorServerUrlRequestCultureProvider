@@ -1,0 +1,14 @@
+﻿@inject NavigationManager NavigationManager
+@inject IStringLocalizer<App> Localizer
+
+<a class="nav-link" @onclick="Click" href="@Localizer["/"]">
+    <span class="oi oi-globe" aria-hidden="true"></span>
+    @Localizer["LanguageToggle"]
+</a>
+
+@code {
+    public void Click()
+    {
+        NavigationManager.NavigateTo(@Localizer["/"], forceLoad: true);
+    }
+}
