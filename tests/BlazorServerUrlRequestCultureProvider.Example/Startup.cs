@@ -31,9 +31,7 @@ namespace BlazorServerUrlRequestCultureProvider.Example
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
-
-            services.AddHttpContextAccessor();
-            //services.AddSingleton<CircuitHandler, LocalizationTrackingCircuitHandler>();
+            
             services.AddLocalization(options => options.ResourcesPath = "Resources");
         }
 
