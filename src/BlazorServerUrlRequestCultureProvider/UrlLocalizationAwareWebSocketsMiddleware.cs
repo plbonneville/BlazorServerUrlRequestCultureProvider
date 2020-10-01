@@ -34,7 +34,7 @@ namespace BlazorServerUrlRequestCultureProvider
          * https://docs.microsoft.com/en-us/aspnet/core/blazor/advanced-scenarios?view=aspnetcore-3.1#blazor-server-circuit-handler
          */
 
-        protected internal static readonly ConcurrentDictionary<string, string> CultureByConnectionTokens = new ConcurrentDictionary<string, string>();
+        private static readonly ConcurrentDictionary<string, string> CultureByConnectionTokens = new ConcurrentDictionary<string, string>();
         private readonly RequestDelegate _next;
 
         /// <summary>

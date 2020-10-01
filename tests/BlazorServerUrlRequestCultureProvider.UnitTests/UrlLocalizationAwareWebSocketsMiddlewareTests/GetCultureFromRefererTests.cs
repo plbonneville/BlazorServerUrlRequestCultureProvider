@@ -35,11 +35,11 @@ namespace BlazorServerUrlRequestCultureProvider.UnitTests
             // Arrange
             _context.Request.Headers["Referer"] = $"http://example.com/{twoLetterISOLanguageName}";
 
-            RequestDelegate next = (HttpContext hc) =>
+            Task next(HttpContext hc)
             {
                 Asserter();
                 return Task.CompletedTask;
-            };
+            }
 
             var sutMiddleware = new UrlLocalizationAwareWebSocketsMiddleware(next);
 
@@ -61,11 +61,11 @@ namespace BlazorServerUrlRequestCultureProvider.UnitTests
             // Arrange
             _context.Request.Headers["Referer"] = $"http://example.com/{twoLetterISOLanguageName}/";
 
-            RequestDelegate next = (HttpContext hc) =>
+            Task next(HttpContext hc)
             {
                 Asserter();
                 return Task.CompletedTask;
-            };
+            }
 
             var sutMiddleware = new UrlLocalizationAwareWebSocketsMiddleware(next);
 
