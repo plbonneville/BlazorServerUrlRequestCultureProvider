@@ -7,11 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorServerUrlRequestCultu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorServerUrlRequestCultureProvider.Example", "tests\BlazorServerUrlRequestCultureProvider.Example\BlazorServerUrlRequestCultureProvider.Example.csproj", "{D26B92F4-2ACC-4B3E-9068-D0921DBD10B7}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A0ACA566-7462-4481-A834-72759DC71268}"
-	ProjectSection(SolutionItems) = preProject
-		docker-compose.yml = docker-compose.yml
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorServerUrlRequestCultureProvider.UnitTests", "tests\BlazorServerUrlRequestCultureProvider.UnitTests\BlazorServerUrlRequestCultureProvider.UnitTests.csproj", "{47B13B89-886D-4736-9A84-CD814506B42D}"
 EndProject
 Global
