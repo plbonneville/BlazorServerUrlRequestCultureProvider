@@ -25,6 +25,7 @@ jobs:
       with:
         version: '2020.1'
     - run: ls
+    - run: /opt/hostedtoolcache/resharper-ctl/2020.1/x64/InspectCode.sh BlazorServerUrlRequestCultureProvider.sln
       
   #second_job:
   #  needs: inspect-goit
