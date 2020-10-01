@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Moq;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -32,11 +29,11 @@ namespace BlazorServerUrlRequestCultureProvider.UnitTests
         [Trait("Category", nameof(UrlLocalizationAwareWebSocketsMiddleware))]
         public async Task When_culture_is_in_the_dictionary(string twoLetterISOLanguageName)
         {
-            RequestDelegate next = (HttpContext hc) =>
+            Task next(HttpContext hc)
             {
                 Asserter();
                 return Task.CompletedTask;
-            };           
+            }
 
             var sutMiddleware = new FakeUrlLocalizationAwareWebSocketsMiddleware(next, twoLetterISOLanguageName);
 

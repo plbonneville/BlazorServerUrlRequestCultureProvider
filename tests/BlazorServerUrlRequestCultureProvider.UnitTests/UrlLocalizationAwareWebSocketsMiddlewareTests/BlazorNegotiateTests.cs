@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Moq;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -39,23 +36,23 @@ namespace BlazorServerUrlRequestCultureProvider.UnitTests
 
             var root = JsonSerializer.Serialize(new BlazorNegociateBody
             {
-                negotiateVersion = 1,
-                connectionToken = "0000_XXXX_0000"
+                NegotiateVersion = 1,
+                ConnectionToken = "0000_XXXX_0000"
             });
 
-            using var stream = new MemoryStream(Encoding.ASCII.GetBytes(root))
+            await using var stream = new MemoryStream(Encoding.ASCII.GetBytes(root))
             {
                 Position = 0
             };
 
-            RequestDelegate next = (HttpContext hc) =>
+            Task next(HttpContext hc)
             {
                 hc.Response.ContentType = "application/json";
                 hc.Response.Body = stream;
 
                 Asserter();
                 return Task.CompletedTask;
-            };
+            }
 
             var sutMiddleware = new UrlLocalizationAwareWebSocketsMiddleware(next);
 
@@ -81,22 +78,22 @@ namespace BlazorServerUrlRequestCultureProvider.UnitTests
 
             var root = JsonSerializer.Serialize(new BlazorNegociateBody
             {
-                negotiateVersion = 1,
-                connectionToken = "0000_XXXX_0000"
+                NegotiateVersion = 1,
+                ConnectionToken = "0000_XXXX_0000"
             });
 
-            using var stream = new MemoryStream(Encoding.ASCII.GetBytes(root))
+            await using var stream = new MemoryStream(Encoding.ASCII.GetBytes(root))
             {
                 Position = 0
             };
 
-            RequestDelegate next = (HttpContext hc) =>
+            Task next(HttpContext hc)
             {
                 hc.Response.ContentType = "application/json";
                 hc.Response.Body = stream;
 
                 return Task.CompletedTask;
-            };
+            }
 
             var sutMiddleware = new UrlLocalizationAwareWebSocketsMiddleware(next);
 
@@ -107,12 +104,6 @@ namespace BlazorServerUrlRequestCultureProvider.UnitTests
             using StreamReader reader = new StreamReader(stream);
             string text = reader.ReadToEnd();
             Assert.Equal(root, text);
-        }
-
-        private class BlazorNegociateBody
-        {
-            public int negotiateVersion { get; set; }
-            public string connectionToken { get; set; }
         }
     }
 }
