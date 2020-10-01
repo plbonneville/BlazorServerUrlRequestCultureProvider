@@ -24,4 +24,9 @@ jobs:
     - uses: goit/setup-resharper@v1.0.0
       with:
         version: '2020.1'
-    - run: InspectCode.sh BlazorServerUrlRequestCultureProvider.sln
+  
+  second_job:
+    needs: inspect-goit
+    runs-on: ubuntu-latest
+    steps:
+      - run: InspectCode.sh BlazorServerUrlRequestCultureProvider.sln
