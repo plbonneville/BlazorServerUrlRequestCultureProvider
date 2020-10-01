@@ -28,7 +28,7 @@ jobs:
     #- run: ls
     #- run: /opt/hostedtoolcache/resharper-ctl/2020.1/x64/InspectCode.sh BlazorServerUrlRequestCultureProvider.sln
     #- run: /home/runner/.dotnet/tools/jb InspectCode BlazorServerUrlRequestCultureProvider.sln
-    - run: ls /home/runner/.dotnet/tools
+    - run: ls /home/runner/work/_temp/ #/home/runner/.dotnet/tools
       
   #second_job:
   #  needs: inspect-goit
