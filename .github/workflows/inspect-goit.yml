@@ -29,4 +29,4 @@ jobs:
     needs: inspect-goit
     runs-on: ubuntu-latest
     steps:
-      - run: InspectCode BlazorServerUrlRequestCultureProvider.sln
+      - run: resharper-ctl/InspectCode.sh BlazorServerUrlRequestCultureProvider.sln
