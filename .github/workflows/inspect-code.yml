@@ -26,4 +26,4 @@ jobs:
         version: '2020.1'
     
     - name: Analyze code
-    - run: InspectCode.sh BlazorServerUrlRequestCultureProvider.sln
+      run: InspectCode.sh BlazorServerUrlRequestCultureProvider.sln
