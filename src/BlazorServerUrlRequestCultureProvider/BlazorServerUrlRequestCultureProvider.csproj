@@ -6,8 +6,23 @@
     <Nullable>enable</Nullable>
     <OutputType>Library</OutputType>
     <IsPackable>true</IsPackable>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    
+    
     <Authors>Pier-Luc Bonneville</Authors>
-    <Copyright>MIT</Copyright>
+    <Company />
+    <Version>1.0.0</Version>
+    <Copyright>Pier-Luc Bonneville</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/plbonneville/BlazorServerUrlRequestCultureProvider</PackageProjectUrl>
+    <!--<PackageIcon>fluxor-blazor-logo-small.png</PackageIcon>-->
+    <PackageIconUrl />
+    <RepositoryUrl>https://github.com/plbonneville/BlazorServerUrlRequestCultureProvider</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>Blazor Server ULR Globalization Localization i18n</PackageTags>
+    <Product>BlazorServerUrlRequestCultureProvider</Product>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion>1.0.0</FileVersion>
+    <Description>Localization scheme based on the URL path that works with Blazor Server.</Description>
   </PropertyGroup>
 </Project>
