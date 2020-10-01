@@ -30,4 +30,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       #- run: /resharper-ctl/InspectCode.sh BlazorServerUrlRequestCultureProvider.sln
-      - run: ls /resharper-ctl
+      - run: ls .
