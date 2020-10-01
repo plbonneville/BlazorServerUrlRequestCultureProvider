@@ -23,4 +23,4 @@ jobs:
       uses: goit/setup-resharper@v1.0.0
       with:
         version: '2020.1'
-    - run: jb inspectcode BlazorServerUrlRequestCultureProvider.sln
+    - run: inspectcode BlazorServerUrlRequestCultureProvider.sln
