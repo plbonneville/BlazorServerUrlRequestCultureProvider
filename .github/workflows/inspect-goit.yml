@@ -25,4 +25,4 @@ jobs:
       with:
         version: '2020.1'
     - run: find / -name InspectCode.sh -print
-    - run: InspectCode BlazorServerUrlRequestCultureProvider.sln
+    #- run: InspectCode BlazorServerUrlRequestCultureProvider.sln
