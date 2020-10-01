@@ -24,10 +24,11 @@ jobs:
     - uses: goit/setup-resharper@v1.0.0
       with:
         version: '2020.1'
-    - run : echo $PATH
+    #- run : echo $PATH
     #- run: ls
     #- run: /opt/hostedtoolcache/resharper-ctl/2020.1/x64/InspectCode.sh BlazorServerUrlRequestCultureProvider.sln
-    - run: /home/runner/.dotnet/tools/jb InspectCode BlazorServerUrlRequestCultureProvider.sln
+    #- run: /home/runner/.dotnet/tools/jb InspectCode BlazorServerUrlRequestCultureProvider.sln
+    - run: ls /home/runner/.dotnet/tools
       
   #second_job:
   #  needs: inspect-goit
