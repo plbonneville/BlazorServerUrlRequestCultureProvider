@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using JetBrains.Annotations;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Localization;
 using System.Threading.Tasks;
 
@@ -6,6 +7,7 @@ namespace BlazorServerUrlRequestCultureProvider
 {
     public static class RequestCultureMiddlewareExtensions
     {
+        [UsedImplicitly]
         public static IApplicationBuilder UseUrlRequestLocalization(this IApplicationBuilder builder, RequestLocalizationOptions options)
         {
             options.RequestCultureProviders.Clear();

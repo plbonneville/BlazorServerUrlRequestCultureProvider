@@ -62,7 +62,7 @@ namespace BlazorServerUrlRequestCultureProvider.UnitTests
         public FakeUrlLocalizationAwareWebSocketsMiddleware(RequestDelegate next, string twoLetterISOLanguageName)
             : base(next)
         {
-            _cultureByConnectionTokens[BlazorHeartbeatTests.Id] = twoLetterISOLanguageName;
+            CultureByConnectionTokens[BlazorHeartbeatTests.Id] = twoLetterISOLanguageName;
         }
     }
 }

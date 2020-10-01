@@ -34,7 +34,7 @@ namespace BlazorServerUrlRequestCultureProvider
          * https://docs.microsoft.com/en-us/aspnet/core/blazor/advanced-scenarios?view=aspnetcore-3.1#blazor-server-circuit-handler
          */
 
-        protected internal static readonly ConcurrentDictionary<string, string> _cultureByConnectionTokens = new ConcurrentDictionary<string, string>();
+        protected internal static readonly ConcurrentDictionary<string, string> CultureByConnectionTokens = new ConcurrentDictionary<string, string>();
         private readonly RequestDelegate _next;
 
         /// <summary>
@@ -64,12 +64,12 @@ namespace BlazorServerUrlRequestCultureProvider
 
             var nextAction = segments switch
             {
-                string[] { Length: 2 } x
+                { Length: 2 } x
                     when x[0] == "_blazor" && x[1] == "negotiate"
                     && httpContext.Request.Method == "POST"
                     => BlazorNegotiate,
 
-                string[] { Length: 1 } x
+                { Length: 1 } x
                     when x[0] == "_blazor"
                     && httpContext.Request.QueryString.HasValue
                     && httpContext.Request.Method == "GET"
@@ -89,7 +89,7 @@ namespace BlazorServerUrlRequestCultureProvider
         {
             var components = QueryHelpers.ParseQuery(httpContext.Request.QueryString.Value);
             var connectionToken = components["id"];
-            var currentCulture = _cultureByConnectionTokens[connectionToken];
+            var currentCulture = CultureByConnectionTokens[connectionToken];
 
             var culture = new CultureInfo(currentCulture);
             CultureInfo.CurrentCulture = culture;
@@ -99,9 +99,9 @@ namespace BlazorServerUrlRequestCultureProvider
 
             if (httpContext.Response.StatusCode == StatusCodes.Status101SwitchingProtocols)
             {
-                /// When "closing" the SignalR connection (websocket) clean-up the memory by removing the
-                /// token from the dictionary.
-                _cultureByConnectionTokens.TryRemove(connectionToken, out var _);
+                // When "closing" the SignalR connection (websocket) clean-up the memory by removing the
+                // token from the dictionary.
+                CultureByConnectionTokens.TryRemove(connectionToken, out var _);
             } 
         }
 
@@ -124,7 +124,7 @@ namespace BlazorServerUrlRequestCultureProvider
 
             // Save the reference of the response body
             var originalResponseBodyStream = httpContext.Response.Body;
-            using var responseBody = new MemoryStream();
+            await using var responseBody = new MemoryStream();
             httpContext.Response.Body = responseBody;
 
             await _next(httpContext);
@@ -136,7 +136,7 @@ namespace BlazorServerUrlRequestCultureProvider
             {
                 var root = JsonSerializer
                     .Deserialize<BlazorNegociateBody>(responseBodyContent);
-                _cultureByConnectionTokens[root.ConnectionToken] = currentCulture;
+                CultureByConnectionTokens[root.ConnectionToken] = currentCulture;
             }
 
             // Rewind the response body as if we hadn't upwrap-it

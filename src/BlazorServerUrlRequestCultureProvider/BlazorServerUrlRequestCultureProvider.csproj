@@ -25,4 +25,8 @@
     <FileVersion>1.0.0</FileVersion>
     <Description>Localization scheme based on the URL path that works with Blazor Server.</Description>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2020.1.0" />
+  </ItemGroup>
 </Project>
