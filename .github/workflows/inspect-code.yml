@@ -20,10 +20,15 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
     
-    - name: Setup ReSharper Command Line Tools
-      uses: goit/setup-resharper@v1.0.0
+    #- name: Setup ReSharper Command Line Tools
+    #  uses: goit/setup-resharper@v1.0.0
+    #  with:
+    #    version: '2020.1'
+    
+    - name: Install ReSharper CLT
+      uses: kasperhesthaven/setup-resharper-clt@v1.0.0
       with:
-        version: '2020.1'
+          resharper-version: "2020.1" # CLT Version to use, defaults to 2020.1
     
     - name: Analyze code
       run: InspectCode.sh BlazorServerUrlRequestCultureProvider.sln
