@@ -7,8 +7,10 @@
 </a>
 
 @code {
+
     private void Click()
     {
-        NavigationManager.NavigateTo(@Localizer["/"], forceLoad: true);
+        NavigationManager.NavigateTo(Localizer["/"], true);
     }
+
 }

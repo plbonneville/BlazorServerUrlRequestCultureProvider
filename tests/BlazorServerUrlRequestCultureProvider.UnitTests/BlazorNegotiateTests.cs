@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
-using Moq;
-using System.Globalization;
+﻿using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Moq;
 using Xunit;
 
 namespace BlazorServerUrlRequestCultureProvider.UnitTests
@@ -13,7 +13,6 @@ namespace BlazorServerUrlRequestCultureProvider.UnitTests
     public class BlazorNegotiateTests
     {
         private readonly HttpContext _context;
-        private readonly Mock<IHttpContextAccessor> _mockHttpContextAccessor;
 
         public BlazorNegotiateTests()
         {
@@ -21,9 +20,6 @@ namespace BlazorServerUrlRequestCultureProvider.UnitTests
             _context.Request.Path = new PathString("/_blazor/negotiate");
             _context.Request.Method = "POST";
             _context.Request.QueryString = new QueryString($"?negotiateVersion={It.IsAny<string>()}");
-
-            _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
-            _mockHttpContextAccessor.Setup(_ => _.HttpContext).Returns(_context);
         }
 
         [Theory]
@@ -45,7 +41,7 @@ namespace BlazorServerUrlRequestCultureProvider.UnitTests
                 Position = 0
             };
 
-            Task next(HttpContext hc)
+            Task Next(HttpContext hc)
             {
                 hc.Response.ContentType = "application/json";
                 hc.Response.Body = stream;
@@ -54,7 +50,7 @@ namespace BlazorServerUrlRequestCultureProvider.UnitTests
                 return Task.CompletedTask;
             }
 
-            var sutMiddleware = new UrlLocalizationAwareWebSocketsMiddleware(next);
+            var sutMiddleware = new UrlLocalizationAwareWebSocketsMiddleware(Next);
 
             // Act
             await sutMiddleware.InvokeAsync(_context);
@@ -87,7 +83,7 @@ namespace BlazorServerUrlRequestCultureProvider.UnitTests
                 Position = 0
             };
 
-            Task next(HttpContext hc)
+            Task Next(HttpContext hc)
             {
                 hc.Response.ContentType = "application/json";
                 hc.Response.Body = stream;
@@ -95,14 +91,14 @@ namespace BlazorServerUrlRequestCultureProvider.UnitTests
                 return Task.CompletedTask;
             }
 
-            var sutMiddleware = new UrlLocalizationAwareWebSocketsMiddleware(next);
+            var sutMiddleware = new UrlLocalizationAwareWebSocketsMiddleware(Next);
 
             // Act
             await sutMiddleware.InvokeAsync(_context);
 
             // Assert
-            using StreamReader reader = new StreamReader(stream);
-            string text = reader.ReadToEnd();
+            using var reader = new StreamReader(stream);
+            var text = reader.ReadToEnd();
             Assert.Equal(root, text);
         }
     }

@@ -1,7 +1,7 @@
-using Microsoft.AspNetCore.Http;
-using Moq;
 using System.Globalization;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Moq;
 using Xunit;
 
 namespace BlazorServerUrlRequestCultureProvider.UnitTests
@@ -14,7 +14,6 @@ namespace BlazorServerUrlRequestCultureProvider.UnitTests
     public class GetCultureFromRefererTests
     {
         private readonly HttpContext _context;
-        private readonly Mock<IHttpContextAccessor> _mockHttpContextAccessor;
 
         public GetCultureFromRefererTests()
         {
@@ -22,9 +21,6 @@ namespace BlazorServerUrlRequestCultureProvider.UnitTests
             _context.Request.Path = new PathString("/_blazor/negotiate");
             _context.Request.Method = "POST";
             _context.Request.QueryString = new QueryString($"?negotiateVersion={It.IsAny<string>()}");
-
-            _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
-            _mockHttpContextAccessor.Setup(_ => _.HttpContext).Returns(_context);
         }
 
         [Theory]
@@ -35,13 +31,13 @@ namespace BlazorServerUrlRequestCultureProvider.UnitTests
             // Arrange
             _context.Request.Headers["Referer"] = $"http://example.com/{twoLetterISOLanguageName}";
 
-            Task next(HttpContext hc)
+            Task Next(HttpContext hc)
             {
                 Asserter();
                 return Task.CompletedTask;
             }
 
-            var sutMiddleware = new UrlLocalizationAwareWebSocketsMiddleware(next);
+            var sutMiddleware = new UrlLocalizationAwareWebSocketsMiddleware(Next);
 
             // Act
             await sutMiddleware.InvokeAsync(_context);
@@ -61,13 +57,13 @@ namespace BlazorServerUrlRequestCultureProvider.UnitTests
             // Arrange
             _context.Request.Headers["Referer"] = $"http://example.com/{twoLetterISOLanguageName}/";
 
-            Task next(HttpContext hc)
+            Task Next(HttpContext hc)
             {
                 Asserter();
                 return Task.CompletedTask;
             }
 
-            var sutMiddleware = new UrlLocalizationAwareWebSocketsMiddleware(next);
+            var sutMiddleware = new UrlLocalizationAwareWebSocketsMiddleware(Next);
 
             // Act
             await sutMiddleware.InvokeAsync(_context);

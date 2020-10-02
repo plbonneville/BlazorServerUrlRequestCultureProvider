@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Moq;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Moq;
 using Xunit;
 
 namespace BlazorServerUrlRequestCultureProvider.UnitTests
@@ -10,7 +10,6 @@ namespace BlazorServerUrlRequestCultureProvider.UnitTests
     {
         public const string Id = "0000_XXXX_0000";
         private readonly HttpContext _context;
-        private readonly Mock<IHttpContextAccessor> _mockHttpContextAccessor;
 
         public BlazorHeartbeatTests()
         {
@@ -18,9 +17,6 @@ namespace BlazorServerUrlRequestCultureProvider.UnitTests
             _context.Request.Path = new PathString("/_blazor");
             _context.Request.Method = "GET";
             _context.Request.QueryString = new QueryString($"?id={Id}");
-
-            _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
-            _mockHttpContextAccessor.Setup(_ => _.HttpContext).Returns(_context);
         }
 
         [Theory]
@@ -29,13 +25,13 @@ namespace BlazorServerUrlRequestCultureProvider.UnitTests
         [Trait("Category", nameof(UrlLocalizationAwareWebSocketsMiddleware))]
         public async Task When_culture_is_in_the_dictionary(string twoLetterISOLanguageName)
         {
-            Task next(HttpContext hc)
+            Task Next(HttpContext hc)
             {
                 Asserter();
                 return Task.CompletedTask;
             }
 
-            var sutMiddleware = new FakeUrlLocalizationAwareWebSocketsMiddleware(next, twoLetterISOLanguageName);
+            var sutMiddleware = new FakeUrlLocalizationAwareWebSocketsMiddleware(Next, twoLetterISOLanguageName);
 
             // Act
             await sutMiddleware.InvokeAsync(_context);
@@ -51,10 +47,10 @@ namespace BlazorServerUrlRequestCultureProvider.UnitTests
     public class FakeUrlLocalizationAwareWebSocketsMiddleware : UrlLocalizationAwareWebSocketsMiddleware
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="UrlLocalizationAwareWebSocketsMiddleware"/> class.
+        ///     Initializes a new instance of the <see cref="UrlLocalizationAwareWebSocketsMiddleware" /> class.
         /// </summary>
         /// <param name="next">
-        /// The delegate representing the remaining middleware in the request pipeline.
+        ///     The delegate representing the remaining middleware in the request pipeline.
         /// </param>
         public FakeUrlLocalizationAwareWebSocketsMiddleware(RequestDelegate next, string twoLetterISOLanguageName)
             : base(next)

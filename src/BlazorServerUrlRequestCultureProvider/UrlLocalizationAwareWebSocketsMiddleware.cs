@@ -1,25 +1,22 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.WebUtilities;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Globalization;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace BlazorServerUrlRequestCultureProvider
 {
     /// <remarks>
-    /// Microsoft recommends the use of a cookie to ensures that the WebSocket connection can
-    /// correctly propagate the culture.
-    ///
+    ///     Microsoft recommends the use of a cookie to ensures that the WebSocket connection can
+    ///     correctly propagate the culture.
     ///     If localization schemes are based on the URL path or query string, the scheme might not
     ///     be able to work with WebSockets, thus fail to persist the culture.
-    ///
     ///     Therefore, use of a localization culture cookie is the recommended approach.
-    ///
-    /// This is not the approach we want as people can have multiple browser screens (browser tab or
-    /// iframe) using different languages.
+    ///     This is not the approach we want as people can have multiple browser screens (browser tab or
+    ///     iframe) using different languages.
     /// </remarks>
     public class UrlLocalizationAwareWebSocketsMiddleware
     {
@@ -34,14 +31,16 @@ namespace BlazorServerUrlRequestCultureProvider
          * https://docs.microsoft.com/en-us/aspnet/core/blazor/advanced-scenarios?view=aspnetcore-3.1#blazor-server-circuit-handler
          */
 
-        private static readonly ConcurrentDictionary<string, string> CultureByConnectionTokens = new ConcurrentDictionary<string, string>();
+        protected static readonly ConcurrentDictionary<string, string> CultureByConnectionTokens =
+            new ConcurrentDictionary<string, string>();
+
         private readonly RequestDelegate _next;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UrlLocalizationAwareWebSocketsMiddleware"/> class.
+        ///     Initializes a new instance of the <see cref="UrlLocalizationAwareWebSocketsMiddleware" /> class.
         /// </summary>
         /// <param name="next">
-        /// The delegate representing the remaining middleware in the request pipeline.
+        ///     The delegate representing the remaining middleware in the request pipeline.
         /// </param>
         public UrlLocalizationAwareWebSocketsMiddleware(RequestDelegate next)
         {
@@ -49,10 +48,10 @@ namespace BlazorServerUrlRequestCultureProvider
         }
 
         /// <summary>
-        /// Handles the requests and returns a Task that represents the execution of the middleware.
+        ///     Handles the requests and returns a Task that represents the execution of the middleware.
         /// </summary>
         /// <param name="httpContext">
-        /// The HTTP context reprensenting the request.
+        ///     The HTTP context reprensenting the request.
         /// </param>
         public async Task InvokeAsync(HttpContext httpContext)
         {
@@ -60,19 +59,19 @@ namespace BlazorServerUrlRequestCultureProvider
                 .Request
                 .Path
                 .Value
-                .Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+                .Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
 
             var nextAction = segments switch
             {
                 { Length: 2 } x
                     when x[0] == "_blazor" && x[1] == "negotiate"
-                    && httpContext.Request.Method == "POST"
+                                           && httpContext.Request.Method == "POST"
                     => BlazorNegotiate,
 
                 { Length: 1 } x
                     when x[0] == "_blazor"
-                    && httpContext.Request.QueryString.HasValue
-                    && httpContext.Request.Method == "GET"
+                         && httpContext.Request.QueryString.HasValue
+                         && httpContext.Request.Method == "GET"
                     => BlazorHeartbeat,
 
                 _ => _next
@@ -82,8 +81,8 @@ namespace BlazorServerUrlRequestCultureProvider
         }
 
         /// <summary>
-        /// On blazor heartbeat, set the culture based on the dictionary entry created in
-        /// <see cref="BlazorNegotiate(HttpContext httpContext)"/>.
+        ///     On blazor heartbeat, set the culture based on the dictionary entry created in
+        ///     <see cref="BlazorNegotiate(HttpContext httpContext)" />.
         /// </summary>
         private async Task BlazorHeartbeat(HttpContext httpContext)
         {
@@ -102,13 +101,13 @@ namespace BlazorServerUrlRequestCultureProvider
                 // When "closing" the SignalR connection (websocket) clean-up the memory by removing the
                 // token from the dictionary.
                 CultureByConnectionTokens.TryRemove(connectionToken, out var _);
-            } 
+            }
         }
 
         /// <summary>
-        /// On blazor negotiate, set the culture based on the referer and save it to a
-        /// dictionary to be used by the Blazor heartbeat
-        /// <see cref="BlazorHeartbeat(HttpContext)"/>.
+        ///     On blazor negotiate, set the culture based on the referer and save it to a
+        ///     dictionary to be used by the Blazor heartbeat
+        ///     <see cref="BlazorHeartbeat(HttpContext)" />.
         /// </summary>
         private async Task BlazorNegotiate(HttpContext httpContext)
         {

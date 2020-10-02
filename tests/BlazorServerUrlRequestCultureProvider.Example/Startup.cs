@@ -1,3 +1,4 @@
+using System.Globalization;
 using BlazorServerUrlRequestCultureProvider.Example.Data;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;
@@ -5,7 +6,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Globalization;
 
 namespace BlazorServerUrlRequestCultureProvider.Example
 {
@@ -19,7 +19,7 @@ namespace BlazorServerUrlRequestCultureProvider.Example
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
-            
+
             services.AddLocalization(options => options.ResourcesPath = "Resources");
         }
 
@@ -28,20 +28,16 @@ namespace BlazorServerUrlRequestCultureProvider.Example
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
             else
-            {
                 app.UseExceptionHandler("/Error");
-            }
 
             app.UseStaticFiles();
 
             var supportedCultures = new[]
             {
                 new CultureInfo("en"),
-                new CultureInfo("fr"),
+                new CultureInfo("fr")
             };
 
             var options = new RequestLocalizationOptions

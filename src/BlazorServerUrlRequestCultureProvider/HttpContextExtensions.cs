@@ -1,14 +1,16 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Globalization;
+using Microsoft.AspNetCore.Http;
 
 namespace BlazorServerUrlRequestCultureProvider
 {
     public static class HttpContextExtensions
     {
         public static string GetCultureFromRequest(this HttpContext httpContext)
-            => GetCultureFromPath(httpContext.Request.Path.Value);
-        
+        {
+            return GetCultureFromPath(httpContext.Request.Path.Value);
+        }
+
 
         public static string GetCultureFromReferer(this HttpContext httpContext)
         {
@@ -20,7 +22,7 @@ namespace BlazorServerUrlRequestCultureProvider
 
         private static string GetCultureFromPath(string path)
         {
-            var segments = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            var segments = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
 
             if (segments.Length >= 1 && segments[0].Length == 2)
             {
