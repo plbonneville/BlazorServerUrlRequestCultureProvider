@@ -82,5 +82,32 @@ namespace BlazorServerUrlRequestCultureProvider.UnitTests
                 Assert.Equal(twoLetterISOLanguageName, CultureInfo.CurrentCulture.TwoLetterISOLanguageName);
             }
         }
+
+        [Theory]
+        [InlineData("en", "/app1")]
+        [InlineData("fr", "/app1")]
+        public async Task When_cluture_is_set_with_path_base(string twoLetterISOLanguageName, string pathBase)
+        {
+            // Arrange
+            _context.Request.Headers["Referer"] = $"http://example.com{pathBase}/{twoLetterISOLanguageName}/";
+            _context.Request.PathBase = pathBase;
+
+            RequestDelegate next = (HttpContext hc) =>
+            {
+                Asserter();
+                return Task.CompletedTask;
+            };
+
+            var sutMiddleware = new UrlLocalizationAwareWebSocketsMiddleware(next);
+
+            // Act
+            await sutMiddleware.InvokeAsync(_context);
+
+            // Assert
+            void Asserter()
+            {
+                Assert.Equal(twoLetterISOLanguageName, CultureInfo.CurrentCulture.TwoLetterISOLanguageName);
+            }
+        }
     }
 }
