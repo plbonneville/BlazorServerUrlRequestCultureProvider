@@ -1,0 +1,32 @@
+﻿@page "/"
+@page "/en"
+@page "/fr"
+@using Microsoft.Extensions.Options
+
+@inject IStringLocalizer<App> Localizer
+@inject ILtdStringLocalizer<App> Localizer2
+
+@* @inject IStringLocalizer<Home> Localizer3
+@inject ILtdStringLocalizer<Home> Localizer4 *@
+
+@inject IOptions<LocalizationOptions> localizationOptions
+
+<PageTitle>Home</PageTitle>
+
+<h1>@Localizer["Hello, world!"]</h1>
+<h2>@System.Globalization.CultureInfo.CurrentCulture.Name</h2>
+<h2>@System.Globalization.CultureInfo.CurrentUICulture.Name</h2>
+
+@Localizer["Welcome to your new app."]
+@Localizer2["Welcome to your new app.", new ("fr")]
+
+@* @Localizer3["Welcome to your new app."]
+@Localizer4["Welcome to your new app.", new("fr")] *@
+
+@code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
+}
