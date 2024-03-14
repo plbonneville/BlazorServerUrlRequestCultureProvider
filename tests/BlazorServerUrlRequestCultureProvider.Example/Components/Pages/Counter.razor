@@ -1,0 +1,24 @@
+﻿@page "/counter"
+@page "/en/counter"
+@page "/fr/compteur"
+@rendermode InteractiveServer
+
+@inject IStringLocalizer<App> Localizer
+
+<PageTitle>@Localizer["Counter"]</PageTitle>
+
+<h1>@Localizer["Counter"]</h1>
+<h2>@System.Globalization.CultureInfo.CurrentCulture.Name</h2>
+
+<p role="status">@Localizer["Current count:"] @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">@Localizer["Click me"]</button>
+
+@code {
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+}

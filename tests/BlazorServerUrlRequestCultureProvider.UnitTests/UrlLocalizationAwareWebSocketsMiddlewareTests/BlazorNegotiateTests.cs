@@ -1,118 +1,317 @@
-﻿using Microsoft.AspNetCore.Http;
-using Moq;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Net.Http;
+﻿using System.Globalization;
+using System.Net;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
+using System.Web;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
 using Xunit;
 
-namespace BlazorServerUrlRequestCultureProvider.UnitTests
+namespace BlazorServerUrlRequestCultureProvider.UnitTests;
+
+[Trait("Category", nameof(UrlLocalizationAwareWebSocketsMiddleware))]
+public class BlazorNegotiateTests
 {
-    [Trait("Category", nameof(UrlLocalizationAwareWebSocketsMiddleware))]
-    public class BlazorNegotiateTests
+    [Theory]
+    [InlineData("en")]
+    [InlineData("fr")]
+    public async Task GetCultureInfoFromRefererFirstSegment(string twoLetterISOLanguageName)
     {
-        private readonly HttpContext _context;
-        private readonly Mock<IHttpContextAccessor> _mockHttpContextAccessor;
-
-        public BlazorNegotiateTests()
+        var body = new BlazorNegociateBody
         {
-            _context = new DefaultHttpContext();
-            _context.Request.Path = new PathString("/_blazor/negotiate");
-            _context.Request.Method = "POST";
-            _context.Request.QueryString = new QueryString($"?negotiateVersion={It.IsAny<string>()}");
+            negotiateVersion = 1,
+            //connectionToken = "0000_XXXX_0000"
+            connectionToken = Guid.NewGuid().ToString(),
+        };
 
-            _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
-            _mockHttpContextAccessor.Setup(_ => _.HttpContext).Returns(_context);
+        var root = JsonSerializer.Serialize(body);
+        byte[] array = Encoding.ASCII.GetBytes(root);
+        using var responseBody = new MemoryStream(array);
+
+        using var host = new HostBuilder()
+            .ConfigureWebHost(webHostBuilder =>
+            {
+                webHostBuilder
+                .UseTestServer()
+                .Configure(app =>
+                {
+                    IList<CultureInfo> supportedCultures = [new("en"), new("fr")];
+
+                    var options = new RequestLocalizationOptions
+                    {
+                        DefaultRequestCulture = new RequestCulture("en"),
+                        SupportedCultures = supportedCultures,
+                        SupportedUICultures = supportedCultures
+                    };
+
+                    options.RequestCultureProviders.Clear();
+                    options.RequestCultureProviders.Insert(0, new BlazorNegotiateRequestCultureProvider(options));
+
+                    app.UseRequestLocalization(options);
+                    app.UseRequestLocalizationInteractiveServerRenderMode(useCookie: false);
+
+                    app.Run(context =>
+                    {
+                        context.Response.ContentType = "application/json";
+                        context.Response.Body = responseBody;
+
+                        return Task.FromResult(0);
+                    });
+                });
+            }).Build();
+
+        await host.StartAsync();
+
+        using (var server = host.GetTestServer())
+        {
+            var client = server.CreateClient();
+
+            client.DefaultRequestHeaders.Referrer = new Uri($"https://example.com/{twoLetterISOLanguageName}/page");
+
+            var response = await client.PostAsJsonAsync("/_blazor/negotiate", string.Empty);
+
+            FakeUrlLocalizationAwareWebSocketsMiddleware
+                .CultureByConnectionTokens.TryGetValue(body.connectionToken, out var value);
+
+            Assert.Equal(twoLetterISOLanguageName, value);
         }
+    }
 
-        [Theory]
-        [InlineData("en")]
-        [InlineData("fr")]
-        public async Task When_cluture_is_set_without_trailing_slash(string twoLetterISOLanguageName)
+    [Fact]
+    public async Task Ensure_the_response_body_has_been_rewrap()
+    {
+        // Arrange
+        var body = new BlazorNegociateBody
         {
-            // Arrange
-            _context.Request.Headers["Referer"] = $"http://example.com/{twoLetterISOLanguageName}";
+            negotiateVersion = 1,
+            //connectionToken = "0000_XXXX_0000"
+            connectionToken = Guid.NewGuid().ToString(),
+        };
 
-            var root = JsonSerializer.Serialize(new BlazorNegociateBody
+        var root = JsonSerializer.Serialize(body);
+        byte[] array = Encoding.ASCII.GetBytes(root);
+        using var responseBody = new MemoryStream(array);
+
+        using var host = new HostBuilder()
+            .ConfigureWebHost(webHostBuilder =>
             {
-                negotiateVersion = 1,
-                connectionToken = "0000_XXXX_0000"
-            });
+                webHostBuilder
+                .UseTestServer()
+                .Configure(app =>
+                {
+                    app.UseRequestLocalizationInteractiveServerRenderMode();
 
-            using var stream = new MemoryStream(Encoding.ASCII.GetBytes(root))
-            {
-                Position = 0
-            };
+                    app.Run(context =>
+                    {
+                        context.Response.ContentType = "application/json";
+                        context.Response.Body = responseBody;
 
-            RequestDelegate next = (HttpContext hc) =>
-            {
-                hc.Response.ContentType = "application/json";
-                hc.Response.Body = stream;
+                        return Task.FromResult(0);
+                    });
+                });
+            }).Build();
 
-                Asserter();
-                return Task.CompletedTask;
-            };
+        await host.StartAsync();
 
-            var sutMiddleware = new UrlLocalizationAwareWebSocketsMiddleware(next);
+        using (var server = host.GetTestServer())
+        {
+            var client = server.CreateClient();
 
             // Act
-            await sutMiddleware.InvokeAsync(_context);
+            var response = await client.PostAsJsonAsync("/_blazor/negotiate", string.Empty);
 
             // Assert
-            // TODO: Need to assert that the cutlure is in the dictionary
-
-            void Asserter()
-            {
-                Assert.Equal(twoLetterISOLanguageName, CultureInfo.CurrentCulture.TwoLetterISOLanguageName);
-            }
-        }
-
-        [Theory]
-        [InlineData("en")]
-        [InlineData("fr")]
-        public async Task Ensure_the_response_body_has_been_rewrap(string twoLetterISOLanguageName)
-        {
-            // Arrange
-            _context.Request.Headers["Referer"] = $"http://example.com/{twoLetterISOLanguageName}";
-
-            var root = JsonSerializer.Serialize(new BlazorNegociateBody
-            {
-                negotiateVersion = 1,
-                connectionToken = "0000_XXXX_0000"
-            });
-
-            using var stream = new MemoryStream(Encoding.ASCII.GetBytes(root))
-            {
-                Position = 0
-            };
-
-            RequestDelegate next = (HttpContext hc) =>
-            {
-                hc.Response.ContentType = "application/json";
-                hc.Response.Body = stream;
-
-                return Task.CompletedTask;
-            };
-
-            var sutMiddleware = new UrlLocalizationAwareWebSocketsMiddleware(next);
-
-            // Act
-            await sutMiddleware.InvokeAsync(_context);
-
-            // Assert
-            using StreamReader reader = new StreamReader(stream);
+            using var reader = new StreamReader(responseBody);
             string text = reader.ReadToEnd();
             Assert.Equal(root, text);
         }
+    }
 
-        private class BlazorNegociateBody
+    [Theory]
+    [InlineData("en")]
+    [InlineData("fr")]
+    public async Task SetsCookie(string twoLetterISOLanguageName)
+    {
+        var body = new BlazorNegociateBody
         {
-            public int negotiateVersion { get; set; }
-            public string connectionToken { get; set; }
+            negotiateVersion = 1,
+            //connectionToken = "0000_XXXX_0000"
+            connectionToken = Guid.NewGuid().ToString(),
+        };
+
+        var root = JsonSerializer.Serialize(body);
+        byte[] array = Encoding.ASCII.GetBytes(root);
+        using var responseBody = new MemoryStream(array);
+
+        using var host = new HostBuilder()
+            .ConfigureWebHost(webHostBuilder =>
+            {
+                webHostBuilder
+                .UseTestServer()
+                .Configure(app =>
+                {
+                    IList<CultureInfo> supportedCultures = [new("en"), new("fr")];
+
+                    var options = new RequestLocalizationOptions
+                    {
+                        DefaultRequestCulture = new RequestCulture("en"),
+                        SupportedCultures = supportedCultures,
+                        SupportedUICultures = supportedCultures
+                    };
+
+                    options.RequestCultureProviders.Clear();
+                    options.RequestCultureProviders.Insert(0, new BlazorNegotiateRequestCultureProvider(options));
+
+                    app.UseRequestLocalization(options);
+                    app.UseRequestLocalizationInteractiveServerRenderMode(useCookie: true);
+
+                    app.Run(context =>
+                    {
+                        context.Response.ContentType = "application/json";
+                        context.Response.Body = responseBody;
+
+                        return Task.FromResult(0);
+                    });
+                });
+            }).Build();
+
+        await host.StartAsync();
+
+        using (var server = host.GetTestServer())
+        {
+            var client = server.CreateClient();
+
+            client.DefaultRequestHeaders.Referrer = new Uri($"https://example.com/{twoLetterISOLanguageName}/page");
+
+            HttpResponseMessage response = await client.PostAsJsonAsync("/_blazor/negotiate", string.Empty);
+
+            IEnumerable<string> cookies = response.Headers.SingleOrDefault(header => header.Key == "Set-Cookie").Value;
+
+            var decoded = HttpUtility.UrlDecode(cookies.First());
+            Assert.Contains(UrlLocalizationAwareWebSocketsMiddleware.StatusCookieName, decoded);
+            Assert.Contains(body.connectionToken, decoded);
         }
+    }
+
+    [Theory]
+    [InlineData("en", "fr")]
+    [InlineData("fr", "en")]
+    public async Task AddValueToExistingCookie(string twoLetterISOLanguageName1, string twoLetterISOLanguageName2)
+    {
+        var body1 = new BlazorNegociateBody
+        {
+            negotiateVersion = 1,
+            //connectionToken = "0000_XXXX_0000"
+            connectionToken = Guid.NewGuid().ToString(),
+        };
+
+        var body2 = new BlazorNegociateBody
+        {
+            negotiateVersion = 1,
+            //connectionToken = "0000_XXXX_0000"
+            connectionToken = Guid.NewGuid().ToString(),
+        };
+
+        var root = JsonSerializer.Serialize(body2);
+        byte[] array = Encoding.ASCII.GetBytes(root);
+        using var responseBody = new MemoryStream(array);
+
+        using var host = new HostBuilder()
+            .ConfigureWebHost(webHostBuilder =>
+            {
+                webHostBuilder
+                .UseTestServer()
+                .Configure(app =>
+                {
+                    IList<CultureInfo> supportedCultures = [new("en"), new("fr")];
+
+                    var options = new RequestLocalizationOptions
+                    {
+                        DefaultRequestCulture = new RequestCulture("en"),
+                        SupportedCultures = supportedCultures,
+                        SupportedUICultures = supportedCultures
+                    };
+
+                    options.RequestCultureProviders.Clear();
+                    options.RequestCultureProviders.Insert(0, new BlazorNegotiateRequestCultureProvider(options));
+
+                    app.UseRequestLocalization(options);
+                    app.UseRequestLocalizationInteractiveServerRenderMode(useCookie: true);
+
+                    app.Run(context =>
+                    {
+                        context.Response.ContentType = "application/json";
+                        context.Response.Body = responseBody;
+
+                        return Task.FromResult(0);
+                    });
+                });
+            }).Build();
+
+        await host.StartAsync();
+
+        using (var server = host.GetTestServer())
+        {
+            var client = server.CreateClient();
+
+            {
+                client.DefaultRequestHeaders.Referrer = new Uri($"https://example.com/{twoLetterISOLanguageName2}/page");
+
+
+                IDictionary<string, string> cookie = new Dictionary<string, string>
+                {
+                    [body1.connectionToken] = twoLetterISOLanguageName1
+                };
+
+                var cookieContent = JsonSerializer.Serialize(cookie.ToArray());
+                var encoded = HttpUtility.UrlEncode(cookieContent);
+
+                var cookieValue = new CookieHeaderValue(UrlLocalizationAwareWebSocketsMiddleware.StatusCookieName, encoded)
+                    .ToString();
+
+                client.DefaultRequestHeaders.Add("Cookie", cookieValue);
+            }
+
+            // Act
+            HttpResponseMessage response = await client.PostAsJsonAsync("/_blazor/negotiate", string.Empty);
+
+            // Assert
+            {
+                // Get the cookie
+                var cookie = response.Headers
+                    .SingleOrDefault(header => header.Key == "Set-Cookie").Value
+                    .Single();
+
+                // Decode the cookie
+                var decoded = HttpUtility.UrlDecode(cookie);
+
+                // Extract the cookie value
+                var cookieSerialized = Regex.Match(decoded, $"(?<={UrlLocalizationAwareWebSocketsMiddleware.StatusCookieName}=)(.*?)(?=;)");
+
+                // Deserialize the cookie value
+                var kvps = JsonSerializer.Deserialize<KeyValuePair<string, string>[]>(cookieSerialized.Value);
+
+                Assert.Equal(2, kvps.Length);
+
+                Assert.Equal(body1.connectionToken, kvps[0].Key);
+                Assert.Equal(twoLetterISOLanguageName1, kvps[0].Value);
+
+                Assert.Equal(body2.connectionToken, kvps[1].Key);
+                Assert.Equal(twoLetterISOLanguageName2, kvps[1].Value);
+            }
+        }
+    }
+
+    private class BlazorNegociateBody
+    {
+        public int negotiateVersion { get; set; }
+        public string connectionToken { get; set; }
     }
 }
