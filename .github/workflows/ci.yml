@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+env:
+  NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.406
+
+      - name: Install dependencies
+        run: dotnet restore ./src/BlazorServerUrlRequestCultureProvider
+
+      - name: Install dependencies for unit tests
+        run: dotnet restore ./tests/BlazorServerUrlRequestCultureProvider.UnitTests
+
+      - name: Build
+        run: dotnet build --nologo --configuration Release --no-restore ./src/BlazorServerUrlRequestCultureProvider
+
+      - name: Test
+        run: dotnet test --nologo --no-restore --verbosity normal ./tests/BlazorServerUrlRequestCultureProvider.UnitTests
+
+      - name: Pack NuGet package
+        run: dotnet pack --configuration Release --no-build ./src/BlazorServerUrlRequestCultureProvider
+
+      - name: Publish NuGet package
+        if: startsWith(github.ref, 'refs/heads/master')
+        run: dotnet nuget push ./src/BlazorServerUrlRequestCultureProvider/bin/Release/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json --skip-duplicate
