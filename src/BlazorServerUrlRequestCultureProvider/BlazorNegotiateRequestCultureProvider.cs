@@ -47,10 +47,18 @@ public class BlazorNegotiateRequestCultureProvider : RequestCultureProvider
         var uri = new Uri(referer);
         var pathString = new PathString(uri.LocalPath);
 
-        // Check if the referer path starts with a supported culture
+        // Get the application base path from the request
+        var basePath = httpContext.Request.PathBase;
+
+        // Check if the referer path starts with a supported culture after excluding base path
         foreach (var culture in Options?.SupportedCultures ?? [])
         {
-            if (pathString.StartsWithSegments($"/{culture.Name}"))
+            // Remove the base path before checking for culture
+            var pathWithoutBase = pathString.StartsWithSegments(basePath, out var remaining)
+                ? remaining.Value
+                : pathString.Value;
+
+            if (pathWithoutBase.StartsWith($"/{culture.Name}", StringComparison.OrdinalIgnoreCase))
             {
                 return Task.FromResult<ProviderCultureResult?>(new ProviderCultureResult(culture.Name));
             }
