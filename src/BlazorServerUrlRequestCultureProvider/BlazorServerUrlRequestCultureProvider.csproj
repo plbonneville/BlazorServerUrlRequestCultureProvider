@@ -1,9 +1,7 @@
-﻿
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <!--<TargetFrameworks>netcoreapp3.1;net8.0</TargetFrameworks>-->
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <OutputType>Library</OutputType>
@@ -11,7 +9,7 @@
 
     <Authors>Pier-Luc Bonneville</Authors>
     <Company />
-    <Version>2.0.0</Version>
+    <Version>2.1.0</Version>
     <Copyright>Pier-Luc Bonneville</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/plbonneville/BlazorServerUrlRequestCultureProvider</PackageProjectUrl>
@@ -21,8 +19,8 @@
     <PackageTags>Blazor Server ULR Globalization Localization i18n</PackageTags>
     <Product>BlazorServerUrlRequestCultureProvider</Product>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AssemblyVersion>2.0.0</AssemblyVersion>
-    <FileVersion>2.0.0</FileVersion>
+    <AssemblyVersion>2.1.0</AssemblyVersion>
+    <FileVersion>2.1.0</FileVersion>
     <Description>Localization scheme based on the URL path that works with Blazor Server.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
