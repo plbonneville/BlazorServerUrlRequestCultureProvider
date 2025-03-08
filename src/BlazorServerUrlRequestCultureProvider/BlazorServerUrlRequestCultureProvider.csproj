@@ -8,8 +8,7 @@
     <Nullable>enable</Nullable>
     <OutputType>Library</OutputType>
     <IsPackable>true</IsPackable>
-    
-    
+
     <Authors>Pier-Luc Bonneville</Authors>
     <Company />
     <Version>2.0.0</Version>
@@ -26,5 +25,10 @@
     <AssemblyVersion>2.0.0</AssemblyVersion>
     <FileVersion>2.0.0</FileVersion>
     <Description>Localization scheme based on the URL path that works with Blazor Server.</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+      <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
 </Project>
