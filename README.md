@@ -50,10 +50,10 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 
     options.ApplyCurrentCultureToResponseHeaders = true;
 
-    // Configure globalization for static server rendering (SSR)
+    // Configure globalization for static server-side rendering (static SSR)
     options.RequestCultureProviders.Insert(0, new UrlRequestCultureProvider(options));
 
-    // Configure globalization for interactive server rendering using Blazor Server
+    // Configure globalization for interactive server-side rendering (interactive SSR) using Blazor Server.
     options.RequestCultureProviders.Insert(1, new BlazorNegotiateRequestCultureProvider(options));
 });
 
