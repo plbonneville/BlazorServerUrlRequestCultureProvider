@@ -1,7 +1,6 @@
 # BlazorServerUrlRequestCultureProvider
 
 [![NuGet version (BlazorServerUrlRequestCultureProvider)](https://img.shields.io/nuget/v/BlazorServerUrlRequestCultureProvider.svg)](https://www.nuget.org/packages/BlazorServerUrlRequestCultureProvider/)
-[![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/plbonneville/BlazorInteractive/blob/master/LICENSE)
 
 Localization scheme based on the URL path that works with Blazor Server (WebSockets) and Blazor Static SSR.
 
