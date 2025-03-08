@@ -105,7 +105,7 @@ app.Run();
 
 ### Counter.razor
 
-```
+```razor
 @page "/en/counter"
 @page "/fr/compteur"
 
