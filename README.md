@@ -15,13 +15,15 @@ Localization scheme based on the URL path that works with Blazor Server (WebSock
 4. When closing the websocket:
     Remove the stored connection token and culture key/value pair
 
-## How to use
+## How to use this package
 
 Add the NuGet package to your Blazor Server project:
 
 ```bash
 dotnet add package BlazorServerUrlRequestCultureProvider
 ```
+
+### Program.cs
 
 In your `Program.cs` file, add the following code:
 
@@ -83,4 +85,42 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.Run();
+```
+
+### Index.razor
+
+```razor
+@page "/"
+@page "/fr"
+@page "/en"
+@inject IStringLocalizer<App> Localizer
+
+
+<h1>@Localizer["Hello, world!"]</h1>
+
+@Localizer["Welcome to your new app."]
+```
+
+### Counter.razor
+
+```
+@page "/en/counter"
+@page "/fr/compteur"
+
+@inject IStringLocalizer<App> Localizer
+
+<h1>@Localizer["Counter"]</h1>
+
+<p>@Localizer["Current count:"] @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">@Localizer["Click me"]</button>
+
+@code {
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+}
 ```
