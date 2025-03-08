@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Net.Http.Headers;
-using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace BlazorServerUrlRequestCultureProvider.UnitTests;
@@ -39,7 +38,7 @@ public class BlazorConnectTests
                         Assert.Equal(twoLetterISOLanguageName, CultureInfo.CurrentCulture.Name);
                         Assert.Equal(twoLetterISOLanguageName, CultureInfo.CurrentUICulture.Name);
 
-                        return Task.FromResult(0);
+                        return Task.CompletedTask;
                     });
                 });
             }).Build();
@@ -78,7 +77,7 @@ public class BlazorConnectTests
                     {
                         context.Response.StatusCode = 200;
 
-                        return Task.FromResult(0);
+                        return Task.CompletedTask;
                     });
                 });
             }).Build();
@@ -124,7 +123,7 @@ public class BlazorConnectTests
                         Assert.Equal(twoLetterISOLanguageName, CultureInfo.CurrentCulture.Name);
                         Assert.Equal(twoLetterISOLanguageName, CultureInfo.CurrentUICulture.Name);
 
-                        return Task.FromResult(0);
+                        return Task.CompletedTask;
                     });
                 });
             }).Build();

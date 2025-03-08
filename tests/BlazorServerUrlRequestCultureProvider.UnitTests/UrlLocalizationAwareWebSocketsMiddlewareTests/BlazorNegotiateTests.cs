@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using System.Net;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
@@ -62,7 +61,7 @@ public class BlazorNegotiateTests
                         context.Response.ContentType = "application/json";
                         context.Response.Body = responseBody;
 
-                        return Task.FromResult(0);
+                        return Task.CompletedTask;
                     });
                 });
             }).Build();
@@ -113,7 +112,7 @@ public class BlazorNegotiateTests
                         context.Response.ContentType = "application/json";
                         context.Response.Body = responseBody;
 
-                        return Task.FromResult(0);
+                        return Task.CompletedTask;
                     });
                 });
             }).Build();
@@ -177,7 +176,7 @@ public class BlazorNegotiateTests
                         context.Response.ContentType = "application/json";
                         context.Response.Body = responseBody;
 
-                        return Task.FromResult(0);
+                        return Task.CompletedTask;
                     });
                 });
             }).Build();
@@ -250,7 +249,7 @@ public class BlazorNegotiateTests
                         context.Response.ContentType = "application/json";
                         context.Response.Body = responseBody;
 
-                        return Task.FromResult(0);
+                        return Task.CompletedTask;
                     });
                 });
             }).Build();
